@@ -3,56 +3,54 @@
 const express = require('express');
 const app = express();
 
-app.get('/math/circle/:r', (req, res) => {
-  const r = parseFloat(req.params.r);
+let categories = ['funnyJoke', 'lameJoke'];
 
-  if (isNaN(r) || r < 0) {
-    return res.status(400).json({ error: 'Invalid radius' });
+let funnyJoke = [
+  {
+    'joke': 'Dlaczego komputer poszedł do lekarza?',
+    'response': 'Bo złapał wirusa!'
+  },
+  {
+    'joke': 'Dlaczego komputer nie może być głodny?',
+    'response': 'Bo ma pełen dysk!'
+  },
+  {
+    'joke': 'Co mówi jeden bit do drugiego?',
+    'response': '„Trzymaj się, zaraz się przestawiamy!”'
   }
+];
 
-  const area = (Math.PI * r * r).toFixed(2);            // pole
-  const circumference = (2 * Math.PI * r).toFixed(2);   // obwód
+let lameJoke = [
 
-  res.json({
-    area,
-    circumference   
-  });
+  {
+    'joke': 'Dlaczego programiści preferują noc?',
+    'response': 'Bo w nocy jest mniej bugów do łapania!'
+  },
+  {
+    'joke': 'Na czym informatyk wiesza pranie?',
+    'response': 'Na linkach! AAAAAAAAAAAAAAAAAAAAAAAAAAAHAHAHHGHBSRDFKBKHJgrbfgnkhjb,m trace zmysły'
+  },
+  {
+    'joke': 'idą dwie mrówki przez lodowisko, i ta druga mówi do pierwszej, ej uważaj przerębel przed tobą, na co ta druga',
+    'response': 'jaki przerembul bul bul bul'
+  }
+];
+
+app.get('/jokebook/categories', (req, res) => {
+  res.json(categories);
 });
 
-app.get('/math/rectangle/:width/:height', (req, res) => {
-  const width = parseFloat(req.params.width);
-  const height = parseFloat(req.params.height);
+app.get('/jokebook/joke/:category', (req, res) => {
+  const category = req.params.category;
 
-  if (isNaN(width) || isNaN(height) || width < 0 || height < 0) {
-    return res.status(400).json({ error: 'Invalid input' });
+  if (!categories.includes(category)) {
+    return res.json({ error: `no jokes for category ${category}` });
   }
 
-  const area = width * height;
-  const perimeter = 2 * (width + height);
+  const jokes = category === 'funnyJoke' ? funnyJoke : lameJoke;
+  const random = jokes[Math.floor(Math.random() * jokes.length)];
 
-  res.json({
-    area, 
-    perimeter   
-  });
-});
-
-app.get('/math/power/:base/:exponent', (req, res) => {
-  const base = parseFloat(req.params.base);
-  const exponent = parseFloat(req.params.exponent);
-
-  if (isNaN(base) || isNaN(exponent)) {
-    return res.status(400).json({ error: 'Invalid input' });
-  }
-
-  const result = Math.pow(base, exponent);
-  const response = { result };
-
-  if (req.query.root === 'true') {
-    const root = Math.sqrt(base);
-    response.root = root;
-  }
-
-  res.json(response);
+  res.json(random);
 });
 
 const PORT = process.env.PORT || 3000;
