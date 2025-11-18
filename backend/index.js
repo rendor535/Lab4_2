@@ -80,6 +80,32 @@ app.get('/jokebook/stats', (req, res) => {
   });
 });
 
+app.get('/jokebook/search', (req, res) => {
+  const word = req.query.word;
+  if (!word || typeof word !== 'string') {
+    return res.json([]);
+  }
+  const needle = word.toLowerCase();
+  const results = [];
+
+  const searchCategory = (categoryName, arr) => {
+    for (const j of arr) {
+      const jokeText = (j.joke || '').toLowerCase();
+      const respText = (j.response || '').toLowerCase();
+      if (jokeText.includes(needle) || respText.includes(needle)) {
+        results.push({
+          category: categoryName,
+          joke: j.joke,
+          response: j.response
+        });
+      }
+    }
+  };
+  searchCategory('funnyJoke', funnyJoke);
+  searchCategory('lameJoke', lameJoke);
+  
+  return res.json(results);
+});
 
 
 const PORT = process.env.PORT || 3000;
