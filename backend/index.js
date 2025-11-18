@@ -73,6 +73,14 @@ app.post('/jokebook/joke/:category', (req, res) => {
   return res.json({ status: 'ok' });
 });
 
+app.get('/jokebook/stats', (req, res) => {
+  res.json({
+    funnyJoke: funnyJoke.length,
+    lameJoke: lameJoke.length
+  });
+});
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
