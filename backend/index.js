@@ -53,6 +53,27 @@ app.get('/jokebook/joke/:category', (req, res) => {
   res.json(random);
 });
 
+app.post('/jokebook/joke/:category', (req, res) => {
+  const category = req.params.category;
+  const body = req.body;
+
+  if (!body || typeof body.joke !== 'string' || typeof body.response !== 'string') {
+    return res.status(400).json({ error: 'Invalid input. Use string' });
+  }
+
+  if (!jokebook[category]) {
+    return res.status(404).json({ error: `no jokes for category ${category}` });
+  }
+
+  jokebook[category].push({
+    joke: body.joke,
+    response: body.response
+  });
+
+  return res.json({ status: 'ok' });
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
